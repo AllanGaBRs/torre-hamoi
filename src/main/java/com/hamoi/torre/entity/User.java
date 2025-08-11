@@ -5,10 +5,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "tb_user")
@@ -22,6 +19,9 @@ public class User implements UserDetails {
     private String name;
 
     private String password;
+
+    @OneToMany(mappedBy = "user")
+    private List<Score> scores = new ArrayList<>();
 
     @ManyToMany
     @JoinTable(name = "tb_user_role",
@@ -63,6 +63,10 @@ public class User implements UserDetails {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public List<Score> getScores() {
+        return scores;
     }
 
     @Override

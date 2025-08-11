@@ -3,83 +3,88 @@
 <head>
     <meta charset="UTF-8" />
     <title>Cadastro de Usuário</title>
+    <style>
+        body {
+          font-family: Arial, sans-serif;
+          background-color: #f0f0f0;
+          margin: 0;
+          padding: 20px;
+        }
+
+        h1 {
+          color: #333;
+          text-align: center;
+        }
+
+        form {
+          background-color: #fff;
+          padding: 20px;
+          border-radius: 8px;
+          max-width: 400px;
+          margin: 0 auto;
+          box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        label {
+          display: block;
+          font-weight: bold;
+          margin-bottom: 6px;
+          color: #555;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+          width: 100%;
+          padding: 8px 10px;
+          margin-bottom: 16px;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          box-sizing: border-box;
+          font-size: 14px;
+        }
+
+        button {
+          background-color: #007bff;
+          color: white;
+          font-weight: bold;
+          padding: 10px 15px;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+          font-size: 16px;
+          transition: background-color 0.3s ease;
+          width: 100%;
+        }
+
+
+        button:hover {
+          background-color: #0056b3;
+        }
+    </style>
 </head>
-
-<style>
-    body {
-  font-family: Arial, sans-serif;
-  background-color: #f0f0f0;
-  margin: 0;
-  padding: 20px;
-}
-
-h1 {
-  color: #333;
-  text-align: center;
-}
-
-form {
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  max-width: 400px;
-  margin: 0 auto;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
-}
-
-label {
-  display: block;
-  font-weight: bold;
-  margin-bottom: 6px;
-  color: #555;
-}
-
-input[type="text"],
-input[type="password"] {
-  width: 100%;
-  padding: 8px 10px;
-  margin-bottom: 16px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-  font-size: 14px;
-}
-
-button {
-  background-color: #007bff;
-  color: white;
-  font-weight: bold;
-  padding: 10px 15px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: background-color 0.3s ease;
-  width: 100%;
-}
-
-button:hover {
-  background-color: #0056b3;
-}
-
-</style>
 
 <body>
 <h1>Cadastro</h1>
 <form id="cadastro-form">
     <label for="name">Usuário:</label>
     <input type="text" id="name" name="name" required />
-    <br/><br/>
+    <br /><br />
     <label for="password">Senha:</label>
     <input type="password" id="password" name="password" required />
-    <br/><br/>
+    <br /><br />
     <button type="submit">Cadastrar</button>
+    <br>
+    <br>
+    <button id="btn-login" type="button" >Ir para Login</button>
 </form>
 
+
 <script>
+    document.getElementById('btn-login').addEventListener('click', () => {
+        window.location.href = 'http://localhost:8080/index.html';
+    });
     const form = document.getElementById('cadastro-form');
 
-    // Função para fazer o cadastro via fetch
     async function cadastrar(name, password) {
       try {
         const response = await fetch('/users', {
@@ -87,10 +92,21 @@ button:hover {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ name, password }),
         });
+
         if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.message || 'Erro ao cadastrar');
+            const errorText = await response.text();
+            try {
+                const errorJson = JSON.parse(errorText);
+                if (errorJson.message) {
+                    throw new Error(errorJson.message); // só essa mensagem aqui
+                } else {
+                    throw new Error(errorText);
+                }
+            } catch {
+                throw new Error(errorText);
+            }
         }
+
         const user = await response.json();
         alert('Usuário cadastrado com sucesso! ID: ' + user.id);
         form.reset();
@@ -99,7 +115,6 @@ button:hover {
       }
     }
 
-    // Ao enviar o formulário manualmente
     form.addEventListener('submit', (e) => {
       e.preventDefault();
       const name = form.name.value.trim();
@@ -107,18 +122,14 @@ button:hover {
       cadastrar(name, password);
     });
 
-    // Ao carregar a página, tenta pegar params da URL e cadastrar automaticamente
     window.onload = () => {
       const params = new URLSearchParams(window.location.search);
       const name = params.get('name');
       const password = params.get('password');
 
       if (name && password) {
-        // Preenche o formulário com os dados da URL (opcional)
         form.name.value = name;
         form.password.value = password;
-
-        // Faz o cadastro automático
         cadastrar(name, password);
       }
     };

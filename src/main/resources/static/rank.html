@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8" />
+    <title>Ranking Global - Torre de Hanoi</title>
+    <style>
+        body {
+          font-family: Arial, sans-serif;
+          background-color: #f0f2f5;
+          margin: 0;
+          padding: 20px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
+        .container {
+          background-color: white;
+          padding: 20px 30px;
+          border-radius: 8px;
+          box-shadow: 0 0 10px rgba(0,0,0,0.1);
+          width: 400px;
+          text-align: center;
+        }
+        h2 {
+          color: #333;
+        }
+        ul#ranking-list {
+          list-style-type: none;
+          padding: 0;
+          max-height: 300px;
+          overflow-y: auto;
+          text-align: left;
+          margin-top: 20px;
+        }
+        ul#ranking-list li {
+          padding: 8px;
+          border-bottom: 1px solid #ddd;
+          font-size: 16px;
+        }
+        button#btn-logout {
+          margin-top: 20px;
+          background-color: #dc3545;
+          border: none;
+          color: white;
+          padding: 10px 15px;
+          border-radius: 4px;
+          cursor: pointer;
+          font-size: 16px;
+          width: 100%;
+        }
+        button#btn-logout:hover {
+          background-color: #b52a37;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Ranking Global - Torre de Hanoi</h2>
+    <ul id="ranking-list">
+
+    </ul>
+    <button id="btn-logout">Sair</button>
+</div>
+
+<script>
+    // Função para carregar ranking do backend
+    async function carregarRankingGlobal() {
+      const token = localStorage.getItem('access_token');
+      if (!token) {
+        alert('Você não está autenticado!');
+        window.location.href = 'index.html'; // ou página de login
+        return;
+      }
+
+      try {
+        const response = await fetch('/ranking', {
+          headers: {
+            'Authorization': 'Bearer ' + token,
+          },
+        });
+        if (!response.ok) {
+          throw new Error('Erro ao carregar ranking');
+        }
+
+        const ranking = await response.json();
+        const rankingList = document.getElementById('ranking-list');
+        rankingList.innerHTML = '';
+
+        ranking.forEach((item, index) => {
+          const li = document.createElement('li');
+          li.textContent = `${index + 1} - ${item.username}: ${item.score} pontos`;
+          rankingList.appendChild(li);
+        });
+      } catch (err) {
+        alert(err.message);
+      }
+    }
+
+    document.getElementById('btn-logout').addEventListener('click', () => {
+      localStorage.removeItem('access_token');
+      window.location.href = 'index.html'; // volta para a página de login
+    });
+
+    // Carrega o ranking assim que abrir a página
+    window.onload = carregarRankingGlobal;
+</script>
+</body>
+</html>

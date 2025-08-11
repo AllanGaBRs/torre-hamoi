@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8" />
+    <title>Torre de Hanoi - Manual até 64 discos</title>
+    <style>
+        body {
+          font-family: Arial, sans-serif;
+          background-color: #f0f2f5;
+          margin: 20px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
+        #controls {
+          margin-bottom: 20px;
+        }
+        #towers-container {
+          display: flex;
+          justify-content: center;
+          gap: 20px;
+        }
+        .tower {
+          background: #ddd;
+          border-radius: 8px;
+          width: 140px;
+          height: 350px;
+          padding: 10px 0;
+          display: flex;
+          flex-direction: column-reverse;
+          align-items: center;
+          cursor: pointer;
+          user-select: none;
+          overflow-y: auto;
+        }
+        .tower.selected {
+          border: 3px solid #007bff;
+        }
+        .disk {
+          height: 16px;
+          margin-bottom: 3px;
+          border-radius: 4px;
+          background-color: #24c8ff;
+          color: black;
+          font-weight: bold;
+          text-align: center;
+          line-height: 16px;
+          white-space: nowrap;
+          overflow: hidden;
+        }
+        .disk:nth-child(even) {
+          background-color: #3200fc;
+          color: white;
+        }
+        input[type=number] {
+          width: 60px;
+          font-size: 16px;
+          padding: 3px;
+        }
+        button {
+          font-size: 16px;
+          padding: 5px 12px;
+          margin-left: 10px;
+          cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Torre de Hanoi - Modo Manual</h1>
+<div id="controls">
+    <label for="n-discs-input">Número de discos (1 a 64): </label>
+    <input id="n-discs-input" type="number" min="1" max="64" value="5" />
+    <button id="btn-start">Iniciar</button>
+</div>
+
+<div id="towers-container">
+    <div class="tower" data-index="0" title="Torre 1"></div>
+    <div class="tower" data-index="1" title="Torre 2"></div>
+    <div class="tower" data-index="2" title="Torre 3"></div>
+</div>
+
+<script>
+    const towerEls = [...document.querySelectorAll('.tower')];
+    const inputN = document.getElementById('n-discs-input');
+    const btnStart = document.getElementById('btn-start');
+
+    let towers = [[], [], []];
+    let selectedTowerIndex = null;
+    let nDisks = 5;
+    let moveCount = 0;
+    let startTime = null;
+    let endTime = null;
+
+    function getDiskWidth(size) {
+      const maxWidth = 130;
+      const minWidth = 20;
+      if (nDisks <= 1) return maxWidth;
+      const step = (maxWidth - minWidth) / (nDisks - 1);
+      return minWidth + (size - 1) * step;
+    }
+
+    function render() {
+      towerEls.forEach((towerEl, idx) => {
+        towerEl.innerHTML = '';
+        towers[idx].forEach(diskSize => {
+          const disk = document.createElement('div');
+          disk.className = 'disk';
+          disk.style.width = getDiskWidth(diskSize) + 'px';
+          disk.textContent = diskSize;
+          towerEl.appendChild(disk);
+        });
+        if (idx === selectedTowerIndex) {
+          towerEl.classList.add('selected');
+        } else {
+          towerEl.classList.remove('selected');
+        }
+      });
+    }
+
+    function canMove(fromIdx, toIdx) {
+      if (towers[fromIdx].length === 0) return false;
+      const movingDisk = towers[fromIdx][towers[fromIdx].length - 1];
+      const destTower = towers[toIdx];
+      if (destTower.length === 0) return true;
+      const topDiskDest = destTower[destTower.length - 1];
+      return movingDisk < topDiskDest;
+    }
+
+    function moveDisk(fromIdx, toIdx) {
+      if (!canMove(fromIdx, toIdx)) {
+        alert('Movimento inválido: disco maior não pode ficar sobre disco menor!');
+        return false;
+      }
+      const disk = towers[fromIdx].pop();
+      towers[toIdx].push(disk);
+      moveCount++;
+      return true;
+    }
+
+    towerEls.forEach((towerEl, idx) => {
+      towerEl.addEventListener('click', () => {
+        if (selectedTowerIndex === null) {
+          if (towers[idx].length === 0) {
+            alert('Esta torre não tem discos para mover.');
+            return;
+          }
+          selectedTowerIndex = idx;
+        } else {
+          if (selectedTowerIndex !== idx) {
+            if (moveDisk(selectedTowerIndex, idx)) {
+              if (towers[2].length === nDisks) {
+                endTime = new Date().toISOString();
+                alert('Parabéns! Você completou a Torre de Hanoi! Salvando seu score...');
+                saveScore();
+              }
+            }
+          }
+          selectedTowerIndex = null;
+        }
+        render();
+      });
+    });
+
+    btnStart.addEventListener('click', () => {
+      let val = parseInt(inputN.value, 10);
+      if (isNaN(val) || val < 1 || val > 64) {
+        alert('Por favor, insira um número entre 1 e 64.');
+        return;
+      }
+      nDisks = val;
+      towers = [[], [], []];
+      for(let i = nDisks; i >= 1; i--) {
+        towers[0].push(i);
+      }
+      selectedTowerIndex = null;
+      moveCount = 0;
+      startTime = new Date().toISOString();
+      endTime = null;
+      render();
+    });
+
+    function saveScore() {
+      const scoreData = {
+        nDisks: nDisks,
+        movesMade: moveCount,
+        begin: startTime,
+        end: endTime
+      };
+
+      const token = localStorage.getItem('access_token');
+
+      fetch('/scores', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(scoreData)
+      })
+      .then(response => {
+        if (response.ok) {
+          alert('Score salvo com sucesso!');
+        } else {
+          alert('Falha ao salvar o score.');
+        }
+      })
+      .catch(() => {
+        alert('Erro na comunicação com o servidor.');
+      });
+    }
+
+    btnStart.click();
+</script>
+
+</body>
+</html>

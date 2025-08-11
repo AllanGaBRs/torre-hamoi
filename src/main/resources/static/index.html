@@ -83,23 +83,54 @@ button:hover {
     <div id="login-error" class="error-message"></div>
 </div>
 
-<div id="game-container" class="container" style="display:none;">
-    <h2>Torre de Hanoi</h2>
-    <div id="game"></div>
-    <button id="btn-logout">Sair</button>
-
-    <h3>Ranking Global</h3>
-    <ul id="ranking-list"></ul>
-</div>
-
-<script src="login.js"></script>
-<script src="game.js"></script>
-<script src="ranking.js"></script>
-
 <script>
     document.getElementById('btn-cadastro').addEventListener('click', () => {
       window.location.href = 'http://localhost:8080/cadastro.html';
     });
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const username = document.getElementById('username').value.trim();
+  const password = document.getElementById('password').value.trim();
+  const loginError = document.getElementById('login-error');
+
+  loginError.textContent = '';
+
+  try {
+    const clientId = 'myclientid';
+    const clientSecret = 'myclientsecret';
+    const basicAuth = btoa(`${clientId}:${clientSecret}`);
+
+    const params = new URLSearchParams();
+    params.append('grant_type', 'password');
+    params.append('username', username);
+    params.append('password', password);
+
+    const response = await fetch('http://localhost:8080/oauth2/token', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Basic ${basicAuth}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: params.toString(),
+    });
+
+    if (!response.ok) {
+      const errData = await response.json();
+      loginError.textContent = errData.error_description || 'Erro ao fazer login';
+      return;
+    }
+
+    const data = await response.json();
+    localStorage.setItem('access_token', data.access_token);
+
+    window.location.href = 'torre.html';
+
+  } catch (err) {
+    loginError.textContent = 'Erro de conexão';
+  }
+});
+
 </script>
 </body>
 </html>
