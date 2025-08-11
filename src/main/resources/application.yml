@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: hamoi
+  datasource:
+    url: jdbc:postgresql://localhost:5433/hamoi
+    username: postgres
+    password: 123456
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+security:
+  client-id: ${CLIENT_ID:myclientid}
+  client-secret: ${CLIENT_SECRET:myclientsecret}
+  jwt:
+    duration: ${JWT_DURATION:86400}
+cors:
+  origins: "${CORS_ORIGINS:http://localhost:63342}"

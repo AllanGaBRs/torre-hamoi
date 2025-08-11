@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8" />
+    <title>Torre de Hanoi</title>
+</head>
+
+<style>
+    body {
+  font-family: Arial, sans-serif;
+  background-color: #f0f2f5;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.container {
+  background-color: white;
+  padding: 20px 30px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: 320px;
+  text-align: center;
+}
+
+input[type="text"],
+input[type="password"] {
+  width: 90%;
+  padding: 10px;
+  margin: 8px 0;
+  box-sizing: border-box;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  margin-top: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 95%;
+  font-size: 16px;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+#error-message, #login-error {
+  color: red;
+  margin-top: 10px;
+}
+
+#game {
+  margin: 20px 0;
+}
+
+#ranking-list {
+  list-style-type: none;
+  padding: 0;
+  max-height: 200px;
+  overflow-y: auto;
+  text-align: left;
+}
+
+</style>
+
+<body>
+<div id="login-container" class="container">
+    <h2>Login</h2>
+    <form id="login-form">
+        <input type="text" id="username" placeholder="Usuário" required />
+        <input type="password" id="password" placeholder="Senha" required />
+        <button type="submit">Entrar</button>
+    </form>
+    <button id="btn-cadastro" type="button">Cadastrar</button>
+    <div id="login-error" class="error-message"></div>
+</div>
+
+<div id="game-container" class="container" style="display:none;">
+    <h2>Torre de Hanoi</h2>
+    <div id="game"></div>
+    <button id="btn-logout">Sair</button>
+
+    <h3>Ranking Global</h3>
+    <ul id="ranking-list"></ul>
+</div>
+
+<script src="login.js"></script>
+<script src="game.js"></script>
+<script src="ranking.js"></script>
+
+<script>
+    document.getElementById('btn-cadastro').addEventListener('click', () => {
+      window.location.href = 'http://localhost:8080/cadastro.html';
+    });
+</script>
+</body>
+</html>
