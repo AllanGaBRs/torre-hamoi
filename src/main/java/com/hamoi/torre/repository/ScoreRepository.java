@@ -13,12 +13,13 @@ import java.util.List;
 public interface ScoreRepository extends JpaRepository<Score, Long> {
 
     @Query(value = """
-        SELECT u.username AS username, s.n_disks AS nDisks, s.moves_made AS movesMade, s.duration AS duration
+        SELECT u.name AS name, s.n_disks AS nDisks, s.moves_made AS movesMade, s.duration_seconds AS durationSeconds
         FROM tb_score s
         JOIN tb_user u ON s.user_id = u.id
-        ORDER BY s.n_disks DESC, s.moves_made ASC, s.duration ASC
+        ORDER BY s.n_disks DESC, s.moves_made ASC, s.duration_seconds ASC
         LIMIT 10
     """, nativeQuery = true)
     List<ScoreSummary> findTop10Scores();
+
 
 }

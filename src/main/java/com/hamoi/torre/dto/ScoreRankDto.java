@@ -4,11 +4,11 @@ public class ScoreRankDto {
     private String username;
     private int nDisks;
     private int movesMade;
-    private long durationSeconds;
+    private Long durationSeconds;
 
     public ScoreRankDto() {}
 
-    public ScoreRankDto(String username, int nDisks, int movesMade, long durationSeconds) {
+    public ScoreRankDto(String username, int nDisks, int movesMade, Long durationSeconds) {
         this.username = username;
         this.nDisks = nDisks;
         this.movesMade = movesMade;
@@ -39,11 +39,11 @@ public class ScoreRankDto {
         this.movesMade = movesMade;
     }
 
-    public long getDurationSeconds() {
+    public Long getDurationSeconds() {
         return durationSeconds;
     }
 
-    public void setDurationSeconds(long durationSeconds) {
+    public void setDurationSeconds(Long durationSeconds) {
         this.durationSeconds = durationSeconds;
     }
 }

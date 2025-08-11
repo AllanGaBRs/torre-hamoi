@@ -56,14 +56,19 @@
 <body>
 <div class="container">
     <h2>Ranking Global - Torre de Hanoi</h2>
-    <ul id="ranking-list">
-
-    </ul>
+    <ul id="ranking-list"></ul>
     <button id="btn-logout">Sair</button>
 </div>
 
 <script>
-    // Função para carregar ranking do backend
+    // Função para formatar duração (em segundos) para mm:ss
+    function formatDuration(durationSeconds) {
+      if (!durationSeconds) return 'N/A';
+      const minutes = Math.floor(durationSeconds / 60);
+      const seconds = durationSeconds % 60;
+      return `${minutes}m ${seconds}s`;
+    }
+
     async function carregarRankingGlobal() {
       const token = localStorage.getItem('access_token');
       if (!token) {
@@ -73,7 +78,7 @@
       }
 
       try {
-        const response = await fetch('/ranking', {
+        const response = await fetch('/scores/top10', {
           headers: {
             'Authorization': 'Bearer ' + token,
           },
@@ -88,7 +93,7 @@
 
         ranking.forEach((item, index) => {
           const li = document.createElement('li');
-          li.textContent = `${index + 1} - ${item.username}: ${item.score} pontos`;
+          li.textContent = `${index + 1} - ${item.username}: Discos: ${item.nDisks}, Movimentos: ${item.movesMade}, Duração: ${formatDuration(item.durationSeconds)}`;
           rankingList.appendChild(li);
         });
       } catch (err) {

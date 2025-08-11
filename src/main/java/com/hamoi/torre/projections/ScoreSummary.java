@@ -3,8 +3,8 @@ package com.hamoi.torre.projections;
 import java.time.Duration;
 
 public interface ScoreSummary {
-    String getUsername();
+    String getName();
     int getNDisks();
     int getMovesMade();
-    long getDuration();
+    Long getDurationSeconds();
 }

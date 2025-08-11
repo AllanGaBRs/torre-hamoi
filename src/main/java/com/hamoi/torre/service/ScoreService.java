@@ -28,8 +28,9 @@ public class ScoreService {
     @Transactional(readOnly = true)
     public List<ScoreRankDto> getTop10Scores() {
         List<ScoreSummary> scores = scoreRepository.findTop10Scores();
+        System.out.println(scores.getFirst());
         return scores.stream()
-                .map(s -> new ScoreRankDto(s.getUsername(), s.getNDisks(), s.getMovesMade(), s.getDuration()))
+                .map(s -> new ScoreRankDto(s.getName(), s.getNDisks(), s.getMovesMade(), s.getDurationSeconds() != null ? s.getDurationSeconds() : 0L))
                 .toList();
     }
 

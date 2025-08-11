@@ -21,7 +21,7 @@ public class Score {
     @Column(name = "endTime")
     private Instant end;
 
-    private long durationSeconds;
+    private Long durationSeconds;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -35,13 +35,6 @@ public class Score {
         if (begin != null && end != null) {
             this.durationSeconds = Duration.between(begin, end).getSeconds();
         }
-    }
-
-    public boolean isBetterThan(Score other) {
-        if (other == null) return true;
-        if (this.nDisks != other.nDisks) return this.nDisks > other.nDisks;
-        if (this.movesMade != other.movesMade) return this.movesMade < other.movesMade;
-        return this.durationSeconds < other.durationSeconds;
     }
 
     public Long getId() {
@@ -80,7 +73,7 @@ public class Score {
         this.end = end;
     }
 
-    public long getDurationSeconds() {
+    public Long getDurationSeconds() {
         return durationSeconds;
     }
 
