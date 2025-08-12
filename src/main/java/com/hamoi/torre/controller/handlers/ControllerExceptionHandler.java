@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.time.Instant;
+import java.util.NoSuchElementException;
 
 @ControllerAdvice
 public class ControllerExceptionHandler {
@@ -29,8 +30,8 @@ public class ControllerExceptionHandler {
         return ResponseEntity.status(status).body(err);
     }
 
-    @ExceptionHandler(DatabaseException.class)
-    public ResponseEntity<CustomError> database(DatabaseException e, HttpServletRequest request) {
+    @ExceptionHandler({DatabaseException.class, NoSuchElementException.class})
+    public ResponseEntity<CustomError> database(Exception e, HttpServletRequest request) {
         HttpStatus status = HttpStatus.BAD_REQUEST;
         CustomError err = new CustomError(
                 Instant.now(),

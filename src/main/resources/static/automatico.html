@@ -4,37 +4,174 @@
     <meta charset="UTF-8" />
     <title>Torre de Hanoi - Automático até 64 discos</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Roboto:wght@400;700&display=swap');
+
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
+
         body {
-          font-family: Arial, sans-serif;
-          background-color: #f0f2f5;
-          margin: 20px;
+          font-family: 'Roboto', Arial, sans-serif;
+          background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+          color: #eee;
+          min-height: 100vh;
+          padding: 30px 20px;
           display: flex;
           flex-direction: column;
           align-items: center;
+          user-select: none;
+          text-align: center;
+          position: relative;
         }
+
+        body::before {
+          content: '';
+          position: fixed;
+          top: -40%;
+          left: -40%;
+          width: 180%;
+          height: 180%;
+          background: radial-gradient(circle at center, #00ffff22, transparent 70%);
+          animation: pulse 6s infinite;
+          pointer-events: none;
+          filter: blur(90px);
+          z-index: 0;
+        }
+        @keyframes pulse {
+          0%, 100% { transform: rotate(0deg) scale(1); }
+          50% { transform: rotate(180deg) scale(1.1); }
+        }
+
+        h1 {
+          font-family: 'Orbitron', sans-serif;
+          font-weight: 500;
+          font-size: 3rem;
+          color: #00ffff;
+          text-shadow:
+            0 0 10px #00ffff,
+            0 0 30px #00ffff;
+          margin-bottom: 30px;
+          z-index: 1;
+          position: relative;
+          letter-spacing: 3px;
+        }
+
         #controls {
-          margin-bottom: 20px;
+          margin-bottom: 25px;
+          z-index: 1;
+          position: relative;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          flex-wrap: wrap;
+          justify-content: center;
         }
+
+        label {
+          font-weight: 600;
+          color: #00ffffcc;
+          font-size: 1.1rem;
+          user-select: none;
+        }
+
+        input[type=number] {
+          width: 80px;
+          font-size: 1.1rem;
+          padding: 8px 12px;
+          border-radius: 10px;
+          border: none;
+          outline: none;
+          background: #00ffff22;
+          color: #eee;
+          box-shadow: inset 0 0 8px #00ffff88;
+          transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        input[type=number]:focus {
+          background: #00ffff55;
+          box-shadow:
+            inset 0 0 12px #00ffffcc,
+            0 0 8px #00ffffaa;
+          color: #000;
+        }
+
+        button#startBtn, button#btn-rank {
+          background: linear-gradient(90deg, #00ffff, #00bfbf);
+          border: none;
+          padding: 14px 28px;
+          font-size: 1.2rem;
+          font-weight: 700;
+          color: #011;
+          border-radius: 15px;
+          cursor: pointer;
+          box-shadow:
+            0 6px 15px #00ffffcc,
+            inset 0 3px 8px #00bfbfcc;
+          transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.15s ease;
+          user-select: none;
+          text-shadow: 0 0 6px #003333;
+          margin-top: 15px;
+          min-width: 140px;
+          position: relative;
+          z-index: 1;
+        }
+        button#startBtn:hover, button#btn-rank:hover {
+          background: linear-gradient(90deg, #00bfbf, #00ffff);
+          box-shadow:
+            0 8px 25px #00ffffee,
+            inset 0 4px 10px #00ffffee;
+          transform: translateY(-3px);
+          color: #000;
+          text-shadow: none;
+        }
+        button#startBtn:active, button#btn-rank:active {
+          transform: translateY(1px);
+          box-shadow: inset 0 4px 7px #009999;
+          color: #002222;
+        }
+
+        #info {
+          margin-top: 15px;
+          font-size: 1.1rem;
+          min-height: 24px;
+          max-width: 90vw;
+          color: #a0f0f0;
+          font-weight: 600;
+          user-select: text;
+          text-shadow: 0 0 4px #00ffffaa;
+          z-index: 1;
+          position: relative;
+        }
+
         #towers-container {
           display: flex;
           justify-content: center;
-          gap: 20px;
+          gap: 25px;
+          width: 100%;
+          max-width: 600px;
+          position: relative;
+          z-index: 1;
+          user-select: none;
         }
+
         .tower {
-          background: #ddd;
-          border-radius: 8px;
+          background: #111827;
+          border-radius: 20px;
           width: 140px;
           height: 350px;
-          padding: 10px 0;
+          padding: 15px 0;
           display: flex;
           flex-direction: column-reverse;
           align-items: center;
-          user-select: none;
           overflow-y: auto;
+          box-shadow:
+            inset 0 0 10px #00ffff66,
+            0 0 12px #00ffffaa;
+          user-select: none;
           position: relative;
-          box-shadow: inset 0 0 10px #bbb;
         }
-        /* Base da torre - a haste vertical */
+        /* Base da torre - haste vertical */
         .tower::before {
           content: "";
           position: absolute;
@@ -43,60 +180,45 @@
           transform: translateX(-50%);
           width: 10px;
           height: 280px;
-          background: #999;
+          background: #00ffffaa;
           border-radius: 5px;
-          box-shadow: 0 0 5px #666 inset;
+          box-shadow:
+            0 0 12px #00ffffcc inset,
+            0 0 15px #00ffffcc;
           z-index: 0;
         }
+        .tower:hover {
+          box-shadow:
+            inset 0 0 15px #00ffffcc,
+            0 0 22px #00ffffee;
+        }
+
         .disk {
-          height: 16px;
-          margin-bottom: 3px;
-          border-radius: 4px;
-          background-color: #24c8ff;
-          color: black;
-          font-weight: bold;
+          height: 18px;
+          margin-bottom: 5px;
+          border-radius: 8px;
+          background-color: #00ffff;
+          color: #011;
+          font-weight: 700;
+          font-family: 'Orbitron', sans-serif;
           text-align: center;
-          line-height: 16px;
+          line-height: 18px;
           white-space: nowrap;
           overflow: hidden;
-          box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+          box-shadow:
+            0 0 8px #00ffffaa,
+            inset 0 0 8px #00bfbfcc;
+          user-select: none;
+          transition: background-color 0.3s ease;
           position: relative;
           z-index: 1;
-          transition: width 0.3s ease;
         }
         .disk:nth-child(even) {
           background-color: #3200fc;
           color: white;
-        }
-        input[type=number] {
-          width: 60px;
-          font-size: 16px;
-          padding: 3px;
-        }
-        button {
-          font-size: 16px;
-          padding: 5px 12px;
-          margin-left: 10px;
-          cursor: pointer;
-          border-radius: 4px;
-          border: none;
-          background: #24c8ff;
-          color: #121212;
-          font-weight: 600;
-          transition: background-color 0.3s ease;
-        }
-        button:hover {
-          background: #3200fc;
-          color: white;
-        }
-        #info {
-          margin-top: 15px;
-          font-size: 16px;
-          min-height: 24px;
-          text-align: center;
-          user-select: text;
-          max-width: 90vw;
-          color: #333;
+          box-shadow:
+            0 0 10px #3200fccc,
+            inset 0 0 10px #4b00ffcc;
         }
     </style>
 </head>
@@ -116,7 +238,7 @@
     <div class="tower" id="tower1" title="Torre 2"></div>
     <div class="tower" id="tower2" title="Torre 3"></div>
 </div>
-<button id="btn-rank" type="button" >Menu</button>
+<button id="btn-rank" type="button">Menu</button>
 <script>
     (function verificarAutenticacao() {
   const token = localStorage.getItem('access_token');

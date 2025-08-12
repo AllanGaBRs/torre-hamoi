@@ -4,62 +4,178 @@
     <meta charset="UTF-8" />
     <title>Ranking Global - Torre de Hanoi</title>
     <style>
-        body {
-          font-family: Arial, sans-serif;
-          background-color: #f0f2f5;
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Roboto:wght@400;700&display=swap');
+
+        * {
           margin: 0;
-          padding: 20px;
+          padding: 0;
+          box-sizing: border-box;
+        }
+
+        body {
+          font-family: 'Roboto', Arial, sans-serif;
+          background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+          height: 100vh;
           display: flex;
           flex-direction: column;
           align-items: center;
-        }
-        .container {
-          background-color: white;
-          padding: 20px 30px;
-          border-radius: 8px;
-          box-shadow: 0 0 10px rgba(0,0,0,0.1);
-          width: 400px;
+          justify-content: center;
+          color: #eee;
+          user-select: none;
+          padding: 20px;
           text-align: center;
         }
-        h2 {
-          color: #333;
+
+        .container {
+          background: linear-gradient(145deg, #1f2937, #111827);
+          padding: 40px 35px 30px 35px;
+          border-radius: 15px;
+          width: 400px;
+          max-width: 90vw;
+          box-shadow:
+            0 0 15px #00ffff,
+            0 0 40px #00ffff,
+            inset 0 0 10px #00bfbf;
+          position: relative;
+          overflow: hidden;
         }
+        .container::before {
+          content: '';
+          position: absolute;
+          top: -50%;
+          left: -50%;
+          width: 200%;
+          height: 200%;
+          background: radial-gradient(circle at center, #00ffff44, transparent 70%);
+          animation: pulse 4s infinite;
+          pointer-events: none;
+          border-radius: 15px;
+          z-index: 0;
+        }
+        @keyframes pulse {
+          0%, 100% { transform: rotate(0deg) scale(1); }
+          50% { transform: rotate(180deg) scale(1.1); }
+        }
+
+        h2 {
+          font-family: 'Orbitron', sans-serif;
+          font-weight: 500;
+          font-size: 2.8rem;
+          color: #00ffff;
+          margin-bottom: 30px;
+          letter-spacing: 3px;
+          text-shadow:
+            0 0 8px #00ffff,
+            0 0 20px #00ffff;
+          position: relative;
+          z-index: 1;
+        }
+
         ul#ranking-list {
-          list-style-type: none;
+          list-style: none;
           padding: 0;
           max-height: 300px;
           overflow-y: auto;
           text-align: left;
           margin-top: 20px;
+          font-size: 1.1rem;
+          font-weight: 600;
+          color: #a0f0f0;
+          position: relative;
+          z-index: 1;
+          border: 1px solid #00ffff55;
+          border-radius: 10px;
+          box-shadow: inset 0 0 12px #00ffff88;
         }
         ul#ranking-list li {
-          padding: 8px;
-          border-bottom: 1px solid #ddd;
-          font-size: 16px;
+          padding: 12px 15px;
+          border-bottom: 1px solid #00ffff33;
+          word-break: break-word;
         }
-        button#btn-logout {
-          margin-top: 20px;
-          background-color: #dc3545;
+        ul#ranking-list li:last-child {
+          border-bottom: none;
+        }
+
+        button#btn-logout,
+        #btn-jogar {
+          margin-top: 25px;
+          background: linear-gradient(90deg, #dc3545, #b52a37);
           border: none;
           color: white;
-          padding: 10px 15px;
-          border-radius: 4px;
+          padding: 14px 0;
+          border-radius: 15px;
           cursor: pointer;
-          font-size: 16px;
+          font-size: 1.15rem;
+          font-weight: 700;
           width: 100%;
+          box-shadow:
+            0 6px 15px #dc3545cc,
+            inset 0 3px 8px #b52a37cc;
+          transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.15s ease;
+          user-select: none;
+          text-shadow: 0 0 5px #660000;
         }
-        button#btn-logout:hover {
-          background-color: #b52a37;
+        button#btn-logout:hover,
+        #btn-jogar:hover {
+          background: linear-gradient(90deg, #b52a37, #dc3545);
+          box-shadow:
+            0 8px 25px #dc3545ee,
+            inset 0 4px 10px #dc3545ee;
+          transform: translateY(-3px);
+          color: #fff;
+          text-shadow: none;
         }
+        button#btn-logout:active,
+        #btn-jogar:active {
+          transform: translateY(1px);
+          box-shadow: inset 0 4px 7px #8a2027;
+          color: #440000;
+        }
+        #btn-jogar {
+  margin-top: 20px;
+  background: linear-gradient(90deg, #00ffff, #00bfbf);
+  border: none;
+  color: #011;
+  padding: 8px 20px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 700;
+  width: auto;
+  box-shadow:
+    0 4px 12px #00ffffaa,
+    inset 0 2px 4px #00bfbfcc;
+  transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.15s ease;
+  user-select: none;
+  text-shadow: 0 0 5px #003333;
+}
+
+#btn-jogar:hover {
+  background: linear-gradient(90deg, #00bfbf, #00ffff);
+  box-shadow:
+    0 6px 20px #00ffffee,
+    inset 0 2px 6px #00ffffee;
+  transform: translateY(-2px);
+  color: #000;
+  text-shadow: none;
+}
+
+#btn-jogar:active {
+  transform: translateY(1px);
+  box-shadow: inset 0 3px 5px #009999;
+  color: #002222;
+}
+
     </style>
 </head>
 <body>
+<button id="btn-jogar" type="button">Menu</button>
 <div class="container">
     <h2>Ranking Global - Torre de Hanoi</h2>
     <ul id="ranking-list"></ul>
     <button id="btn-logout">Sair</button>
 </div>
-<button id="btn-jogar" type="button" >Menu</button>
+
 <script>
     document.getElementById('btn-jogar').addEventListener('click', () => {
        window.location.href = 'http://localhost:8080/menu.html';

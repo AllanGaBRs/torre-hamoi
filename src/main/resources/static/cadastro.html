@@ -4,80 +4,181 @@
     <meta charset="UTF-8" />
     <title>Cadastro de Usuário</title>
     <style>
-        body {
-          font-family: Arial, sans-serif;
-          background-color: #f0f0f0;
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Roboto:wght@400;700&display=swap');
+
+        /* Reset básico */
+        * {
           margin: 0;
-          padding: 20px;
+          padding: 0;
+          box-sizing: border-box;
         }
 
-        h1 {
-          color: #333;
-          text-align: center;
+        body {
+          font-family: 'Roboto', Arial, sans-serif;
+          background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+          height: 100vh;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          color: #eee;
+          user-select: none;
+          padding: 20px;
         }
 
         form {
-          background-color: #fff;
-          padding: 20px;
-          border-radius: 8px;
-          max-width: 400px;
-          margin: 0 auto;
-          box-shadow: 0 0 10px rgba(0,0,0,0.1);
+          background: linear-gradient(145deg, #1f2937, #111827);
+          padding: 40px 35px 30px 35px;
+          border-radius: 15px;
+          width: 380px;
+          max-width: 90vw;
+          box-shadow:
+            0 0 10px #00ffff,
+            0 0 30px #00ffff,
+            inset 0 0 5px #00bfbf;
+          text-align: center;
+          position: relative;
+          overflow: hidden;
+        }
+
+        form::before {
+          content: '';
+          position: absolute;
+          top: -50%;
+          left: -50%;
+          width: 200%;
+          height: 200%;
+          background: radial-gradient(circle at center, #00ffff44, transparent 70%);
+          animation: pulse 4s infinite;
+          pointer-events: none;
+          border-radius: 15px;
+          z-index: 0;
+        }
+        @keyframes pulse {
+          0%, 100% { transform: rotate(0deg) scale(1); }
+          50% { transform: rotate(180deg) scale(1.1); }
+        }
+
+        h1 {
+          font-family: 'Orbitron', sans-serif;
+          font-weight: 500;
+          font-size: 2.8rem;
+          color: #00ffff;
+          margin-bottom: 30px;
+          letter-spacing: 3px;
+          text-shadow:
+            0 0 5px #00ffff,
+            0 0 15px #00ffff;
+          position: relative;
+          z-index: 1;
         }
 
         label {
           display: block;
-          font-weight: bold;
-          margin-bottom: 6px;
-          color: #555;
+          font-weight: 600;
+          margin-bottom: 8px;
+          color: #00ffffcc;
+          text-align: left;
+          font-size: 1rem;
+          position: relative;
+          z-index: 1;
+          user-select: none;
         }
 
         input[type="text"],
         input[type="password"] {
           width: 100%;
-          padding: 8px 10px;
-          margin-bottom: 16px;
-          border: 1px solid #ccc;
-          border-radius: 4px;
-          box-sizing: border-box;
-          font-size: 14px;
+          padding: 15px 18px;
+          margin-bottom: 20px;
+          border-radius: 10px;
+          border: none;
+          font-size: 1.1rem;
+          font-weight: 500;
+          color: #111;
+          background: #00ffff22;
+          box-shadow:
+            inset 0 0 8px #00ffff88;
+          transition: background-color 0.3s ease, box-shadow 0.3s ease;
+          position: relative;
+          z-index: 1;
+          outline: none;
+        }
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+          background: #00ffff55;
+          box-shadow:
+            inset 0 0 12px #00ffffcc,
+            0 0 8px #00ffffaa;
         }
 
         button {
-          background-color: #007bff;
-          color: white;
-          font-weight: bold;
-          padding: 10px 15px;
+          background: linear-gradient(90deg, #00ffff, #00bfbf);
           border: none;
-          border-radius: 4px;
+          padding: 15px 0;
+          margin-top: 10px;
+          border-radius: 12px;
           cursor: pointer;
-          font-size: 16px;
-          transition: background-color 0.3s ease;
           width: 100%;
+          font-size: 1.2rem;
+          font-weight: 700;
+          color: #011;
+          text-shadow: 0 0 5px #003333;
+          box-shadow:
+            0 4px 12px #00ffffaa,
+            inset 0 2px 4px #00bfbfcc;
+          transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.15s ease;
+          user-select: none;
+          position: relative;
+          z-index: 1;
+        }
+        button:hover {
+          background: linear-gradient(90deg, #00bfbf, #00ffff);
+          box-shadow:
+            0 6px 20px #00ffffee,
+            inset 0 2px 6px #00ffffee;
+          transform: translateY(-2px);
+          color: #000;
+          text-shadow: none;
+        }
+        button:active {
+          transform: translateY(1px);
+          box-shadow: inset 0 3px 5px #009999;
+          color: #002222;
         }
 
-
-        button:hover {
-          background-color: #0056b3;
+        #btn-login {
+          margin-top: 22px;
+          background: none;
+          border: 2px solid #00ffff;
+          color: #00ffff;
+          font-weight: 600;
+          font-size: 1rem;
+          box-shadow: none;
+          text-transform: uppercase;
+          letter-spacing: 1.5px;
+          transition: all 0.3s ease;
+        }
+        #btn-login:hover {
+          background: #00ffff;
+          color: #111;
+          box-shadow:
+            0 6px 18px #00ffffcc;
         }
     </style>
 </head>
 
 <body>
-<h1>Cadastro</h1>
 <form id="cadastro-form">
+    <h1>CADASTRO</h1>
     <label for="name">Usuário:</label>
-    <input type="text" id="name" name="name" required />
-    <br /><br />
-    <label for="password">Senha:</label>
-    <input type="password" id="password" name="password" required />
-    <br /><br />
-    <button type="submit">Cadastrar</button>
-    <br>
-    <br>
-    <button id="btn-login" type="button" >Ir para Login</button>
-</form>
+    <input type="text" id="name" name="name" required autocomplete="username" />
 
+    <label for="password">Senha:</label>
+    <input type="password" id="password" name="password" required autocomplete="new-password" />
+
+    <button type="submit">Cadastrar</button>
+
+    <button id="btn-login" type="button">Ir para Login</button>
+</form>
 
 <script>
     document.getElementById('btn-login').addEventListener('click', () => {

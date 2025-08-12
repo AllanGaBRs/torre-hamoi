@@ -27,7 +27,6 @@ public class UserDetailsService implements org.springframework.security.core.use
         User user = new User();
         user.setName(username);
         user.setPassword(result.getFirst().getPassword());
-        System.out.println("DEBUG senha: " + user.getPassword());
         for(UserDetailsProjection projection : result){
             user.addRole(new Role(projection.getRoleId(), projection.getAuthority()));
         }
