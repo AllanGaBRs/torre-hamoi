@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu</title>
+    <style>
+        body {
+          font-family: Arial, sans-serif;
+          text-align: center;
+          background-color: #f4f4f4;
+          padding: 20px;
+        }
+
+        h2 {
+          margin-bottom: 30px;
+        }
+
+        .menu-container {
+          display: flex;
+          flex-direction: column;
+          gap: 15px;
+          max-width: 300px;
+          margin: 0 auto;
+        }
+
+        .menu-container button {
+          padding: 10px;
+          font-size: 16px;
+          border: none;
+          background-color: #4CAF50;
+          color: white;
+          cursor: pointer;
+          border-radius: 5px;
+          transition: background-color 0.3s;
+        }
+
+        .menu-container button:hover {
+          background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Escolha uma opção</h2>
+
+<div class="menu-container">
+    <button onclick="irPara('http://localhost:8080/rank.html')">Ranking</button>
+    <button onclick="irPara('http://localhost:8080/torre.html')">Torre</button>
+    <button onclick="irPara('http://localhost:8080/automatico.html')">Automático</button>
+</div>
+
+<script>
+    (function verificarAutenticacao() {
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      alert('Você não está autenticado!');
+      window.location.href = 'index.html';
+    }
+  })();
+   function irPara(pagina) {
+     window.location.href = pagina;
+   }
+</script>
+
+</body>
+</html>

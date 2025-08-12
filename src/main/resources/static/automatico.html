@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8" />
+    <title>Torre de Hanoi - Automático até 64 discos</title>
+    <style>
+        body {
+          font-family: Arial, sans-serif;
+          background-color: #f0f2f5;
+          margin: 20px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
+        #controls {
+          margin-bottom: 20px;
+        }
+        #towers-container {
+          display: flex;
+          justify-content: center;
+          gap: 20px;
+        }
+        .tower {
+          background: #ddd;
+          border-radius: 8px;
+          width: 140px;
+          height: 350px;
+          padding: 10px 0;
+          display: flex;
+          flex-direction: column-reverse;
+          align-items: center;
+          user-select: none;
+          overflow-y: auto;
+          position: relative;
+          box-shadow: inset 0 0 10px #bbb;
+        }
+        /* Base da torre - a haste vertical */
+        .tower::before {
+          content: "";
+          position: absolute;
+          bottom: 10px;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 10px;
+          height: 280px;
+          background: #999;
+          border-radius: 5px;
+          box-shadow: 0 0 5px #666 inset;
+          z-index: 0;
+        }
+        .disk {
+          height: 16px;
+          margin-bottom: 3px;
+          border-radius: 4px;
+          background-color: #24c8ff;
+          color: black;
+          font-weight: bold;
+          text-align: center;
+          line-height: 16px;
+          white-space: nowrap;
+          overflow: hidden;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+          position: relative;
+          z-index: 1;
+          transition: width 0.3s ease;
+        }
+        .disk:nth-child(even) {
+          background-color: #3200fc;
+          color: white;
+        }
+        input[type=number] {
+          width: 60px;
+          font-size: 16px;
+          padding: 3px;
+        }
+        button {
+          font-size: 16px;
+          padding: 5px 12px;
+          margin-left: 10px;
+          cursor: pointer;
+          border-radius: 4px;
+          border: none;
+          background: #24c8ff;
+          color: #121212;
+          font-weight: 600;
+          transition: background-color 0.3s ease;
+        }
+        button:hover {
+          background: #3200fc;
+          color: white;
+        }
+        #info {
+          margin-top: 15px;
+          font-size: 16px;
+          min-height: 24px;
+          text-align: center;
+          user-select: text;
+          max-width: 90vw;
+          color: #333;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Torre de Hanoi Automática</h1>
+<div id="controls">
+    <label for="numDiscs">Número de discos (1 a 64): </label>
+    <input type="number" id="numDiscs" min="1" max="64" value="5" />
+    <button id="startBtn">Iniciar</button>
+</div>
+
+<div id="info"></div>
+
+<div id="towers-container">
+    <div class="tower" id="tower0" title="Torre 1"></div>
+    <div class="tower" id="tower1" title="Torre 2"></div>
+    <div class="tower" id="tower2" title="Torre 3"></div>
+</div>
+
+<script>
+    (function verificarAutenticacao() {
+  const token = localStorage.getItem('access_token');
+  if (!token) {
+    alert('Você não está autenticado!');
+    window.location.href = 'index.html';
+  }
+})();
+  const towers = [[], [], []];
+  let numDiscs = 5;
+  let delay = 50; // ms por movimento
+  let running = false;
+
+  function getDiskWidth(size) {
+    const maxWidth = 130;
+    const minWidth = 20;
+    if (numDiscs <= 1) return maxWidth;
+    const step = (maxWidth - minWidth) / (numDiscs - 1);
+    return minWidth + (size - 1) * step;
+  }
+
+  function render() {
+    for(let i=0; i<3; i++) {
+      const towerEl = document.getElementById('tower' + i);
+      towerEl.innerHTML = '';
+      towers[i].forEach(diskSize => {
+        const disk = document.createElement('div');
+        disk.className = 'disk';
+        disk.style.width = getDiskWidth(diskSize) + 'px';
+        disk.textContent = diskSize;
+        towerEl.appendChild(disk);
+      });
+    }
+  }
+
+  function moveDisk(from, to) {
+    towers[to].push(towers[from].pop());
+    render();
+  }
+
+  async function hanoi(n, from, to, aux) {
+    if (n === 0 || !running) return;
+    await hanoi(n - 1, from, aux, to);
+    moveDisk(from, to);
+    await new Promise(r => setTimeout(r, delay));
+    await hanoi(n - 1, aux, to, from);
+  }
+
+  function resetTowers(qtd) {
+    towers[0] = [];
+    towers[1] = [];
+    towers[2] = [];
+    for(let i=qtd; i>=1; i--) {
+      towers[0].push(i);
+    }
+    render();
+  }
+
+  document.getElementById('startBtn').addEventListener('click', () => {
+    if(running) return; // evita múltiplas execuções
+    numDiscs = parseInt(document.getElementById('numDiscs').value);
+    if(isNaN(numDiscs) || numDiscs <1 || numDiscs >64) {
+      alert('Por favor, insira um número entre 1 e 64.');
+      return;
+    }
+    running = true;
+    resetTowers(numDiscs);
+
+    const minMoves = Math.pow(2, numDiscs) - 1;
+    let estimatedTime = (minMoves * delay) / 1000;
+    let formattedTime = estimatedTime < 60 ? estimatedTime.toFixed(2) + ' s' : (estimatedTime / 60).toFixed(2) + ' min';
+
+    document.getElementById('info').textContent = `Movimentos mínimos: ${minMoves.toLocaleString()} | Tempo estimado: ${formattedTime}`;
+
+    hanoi(numDiscs, 0, 2, 1).then(() => running = false);
+  });
+</script>
+
+</body>
+</html>

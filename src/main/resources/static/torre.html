@@ -79,138 +79,149 @@
     <div class="tower" data-index="1" title="Torre 2"></div>
     <div class="tower" data-index="2" title="Torre 3"></div>
 </div>
-
+<button id="btn-rank" type="button" >Rank</button>
 <script>
-    const towerEls = [...document.querySelectorAll('.tower')];
-    const inputN = document.getElementById('n-discs-input');
-    const btnStart = document.getElementById('btn-start');
+    (function verificarAutenticacao() {
+  const token = localStorage.getItem('access_token');
+  if (!token) {
+    alert('Você não está autenticado!');
+    window.location.href = 'index.html';
+  }
+})();
+  document.getElementById('btn-rank').addEventListener('click', () => {
+     window.location.href = 'http://localhost:8080/rank.html';
+ });
 
-    let towers = [[], [], []];
-    let selectedTowerIndex = null;
-    let nDisks = 5;
-    let moveCount = 0;
-    let startTime = null;
-    let endTime = null;
+ const towerEls = [...document.querySelectorAll('.tower')];
+ const inputN = document.getElementById('n-discs-input');
+ const btnStart = document.getElementById('btn-start');
 
-    function getDiskWidth(size) {
-      const maxWidth = 130;
-      const minWidth = 20;
-      if (nDisks <= 1) return maxWidth;
-      const step = (maxWidth - minWidth) / (nDisks - 1);
-      return minWidth + (size - 1) * step;
-    }
+ let towers = [[], [], []];
+ let selectedTowerIndex = null;
+ let nDisks = 5;
+ let moveCount = 0;
+ let startTime = null;
+ let endTime = null;
 
-    function render() {
-      towerEls.forEach((towerEl, idx) => {
-        towerEl.innerHTML = '';
-        towers[idx].forEach(diskSize => {
-          const disk = document.createElement('div');
-          disk.className = 'disk';
-          disk.style.width = getDiskWidth(diskSize) + 'px';
-          disk.textContent = diskSize;
-          towerEl.appendChild(disk);
-        });
-        if (idx === selectedTowerIndex) {
-          towerEl.classList.add('selected');
-        } else {
-          towerEl.classList.remove('selected');
-        }
-      });
-    }
+ function getDiskWidth(size) {
+   const maxWidth = 130;
+   const minWidth = 20;
+   if (nDisks <= 1) return maxWidth;
+   const step = (maxWidth - minWidth) / (nDisks - 1);
+   return minWidth + (size - 1) * step;
+ }
 
-    function canMove(fromIdx, toIdx) {
-      if (towers[fromIdx].length === 0) return false;
-      const movingDisk = towers[fromIdx][towers[fromIdx].length - 1];
-      const destTower = towers[toIdx];
-      if (destTower.length === 0) return true;
-      const topDiskDest = destTower[destTower.length - 1];
-      return movingDisk < topDiskDest;
-    }
+ function render() {
+   towerEls.forEach((towerEl, idx) => {
+     towerEl.innerHTML = '';
+     towers[idx].forEach(diskSize => {
+       const disk = document.createElement('div');
+       disk.className = 'disk';
+       disk.style.width = getDiskWidth(diskSize) + 'px';
+       disk.textContent = diskSize;
+       towerEl.appendChild(disk);
+     });
+     if (idx === selectedTowerIndex) {
+       towerEl.classList.add('selected');
+     } else {
+       towerEl.classList.remove('selected');
+     }
+   });
+ }
 
-    function moveDisk(fromIdx, toIdx) {
-      if (!canMove(fromIdx, toIdx)) {
-        alert('Movimento inválido: disco maior não pode ficar sobre disco menor!');
-        return false;
-      }
-      const disk = towers[fromIdx].pop();
-      towers[toIdx].push(disk);
-      moveCount++;
-      return true;
-    }
+ function canMove(fromIdx, toIdx) {
+   if (towers[fromIdx].length === 0) return false;
+   const movingDisk = towers[fromIdx][towers[fromIdx].length - 1];
+   const destTower = towers[toIdx];
+   if (destTower.length === 0) return true;
+   const topDiskDest = destTower[destTower.length - 1];
+   return movingDisk < topDiskDest;
+ }
 
-    towerEls.forEach((towerEl, idx) => {
-      towerEl.addEventListener('click', () => {
-        if (selectedTowerIndex === null) {
-          if (towers[idx].length === 0) {
-            alert('Esta torre não tem discos para mover.');
-            return;
-          }
-          selectedTowerIndex = idx;
-        } else {
-          if (selectedTowerIndex !== idx) {
-            if (moveDisk(selectedTowerIndex, idx)) {
-              if (towers[2].length === nDisks) {
-                endTime = new Date().toISOString();
-                alert('Parabéns! Você completou a Torre de Hanoi! Salvando seu score...');
-                saveScore();
-              }
-            }
-          }
-          selectedTowerIndex = null;
-        }
-        render();
-      });
-    });
+ function moveDisk(fromIdx, toIdx) {
+   if (!canMove(fromIdx, toIdx)) {
+     alert('Movimento inválido: disco maior não pode ficar sobre disco menor!');
+     return false;
+   }
+   const disk = towers[fromIdx].pop();
+   towers[toIdx].push(disk);
+   moveCount++;
+   return true;
+ }
 
-    btnStart.addEventListener('click', () => {
-      let val = parseInt(inputN.value, 10);
-      if (isNaN(val) || val < 1 || val > 64) {
-        alert('Por favor, insira um número entre 1 e 64.');
-        return;
-      }
-      nDisks = val;
-      towers = [[], [], []];
-      for(let i = nDisks; i >= 1; i--) {
-        towers[0].push(i);
-      }
-      selectedTowerIndex = null;
-      moveCount = 0;
-      startTime = new Date().toISOString();
-      endTime = null;
-      render();
-    });
+ towerEls.forEach((towerEl, idx) => {
+   towerEl.addEventListener('click', () => {
+     if (selectedTowerIndex === null) {
+       if (towers[idx].length === 0) {
+         alert('Esta torre não tem discos para mover.');
+         return;
+       }
+       selectedTowerIndex = idx;
+     } else {
+       if (selectedTowerIndex !== idx) {
+         if (moveDisk(selectedTowerIndex, idx)) {
+           if (towers[2].length === nDisks) {
+             endTime = new Date().toISOString();
+             alert('Parabéns! Você completou a Torre de Hanoi! Salvando seu score...');
+             saveScore();
+           }
+         }
+       }
+       selectedTowerIndex = null;
+     }
+     render();
+   });
+ });
 
-    function saveScore() {
-      const scoreData = {
-        nDisks: nDisks,
-        movesMade: moveCount,
-        begin: startTime,
-        end: endTime
-      };
+ btnStart.addEventListener('click', () => {
+   let val = parseInt(inputN.value, 10);
+   if (isNaN(val) || val < 1 || val > 64) {
+     alert('Por favor, insira um número entre 1 e 64.');
+     return;
+   }
+   nDisks = val;
+   towers = [[], [], []];
+   for(let i = nDisks; i >= 1; i--) {
+     towers[0].push(i);
+   }
+   selectedTowerIndex = null;
+   moveCount = 0;
+   startTime = new Date().toISOString();
+   endTime = null;
+   render();
+ });
 
-      const token = localStorage.getItem('access_token');
+ function saveScore() {
+   const scoreData = {
+     nDisks: nDisks,
+     movesMade: moveCount,
+     begin: startTime,
+     end: endTime
+   };
 
-      fetch('/scores', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(scoreData)
-      })
-      .then(response => {
-        if (response.ok) {
-          alert('Score salvo com sucesso!');
-        } else {
-          alert('Falha ao salvar o score.');
-        }
-      })
-      .catch(() => {
-        alert('Erro na comunicação com o servidor.');
-      });
-    }
+   const token = localStorage.getItem('access_token');
 
-    btnStart.click();
+   fetch('/scores', {
+     method: 'POST',
+     headers: {
+       'Content-Type': 'application/json',
+       'Authorization': `Bearer ${token}`
+     },
+     body: JSON.stringify(scoreData)
+   })
+   .then(response => {
+     if (response.ok) {
+       alert('Score salvo com sucesso!');
+     } else {
+       alert('Falha ao salvar o score.');
+     }
+   })
+   .catch(() => {
+     alert('Erro na comunicação com o servidor.');
+   });
+ }
+
+ btnStart.click();
 </script>
 
 </body>
