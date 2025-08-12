@@ -79,7 +79,7 @@
     <div class="tower" data-index="1" title="Torre 2"></div>
     <div class="tower" data-index="2" title="Torre 3"></div>
 </div>
-<button id="btn-rank" type="button" >Rank</button>
+<button id="btn-rank" type="button" >Menu</button>
 <script>
     (function verificarAutenticacao() {
   const token = localStorage.getItem('access_token');
@@ -89,7 +89,7 @@
   }
 })();
   document.getElementById('btn-rank').addEventListener('click', () => {
-     window.location.href = 'http://localhost:8080/rank.html';
+     window.location.href = 'http://localhost:8080/menu.html';
  });
 
  const towerEls = [...document.querySelectorAll('.tower')];
